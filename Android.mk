@@ -9,7 +9,7 @@ BIONIC_ICS := true
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := android/regex/regex.c
 LOCAL_C_INCLUDES := $(BB_PATH)/android/regex
-LOCAL_CFLAGS := -Wno-error -Wno-sign-compare -fno-strict-aliasing
+LOCAL_CFLAGS := -Wno-sign-compare
 LOCAL_MODULE := libclearsilverregex
 include $(BUILD_STATIC_LIBRARY)
 
@@ -17,7 +17,6 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(shell cat $(BB_PATH)/android/librpc.sources)
 LOCAL_C_INCLUDES := $(BB_PATH)/android/librpc
-LOCAL_CFLAGS := -Wno-error -fno-strict-aliasing
 LOCAL_MODULE := libuclibcrpc
 LOCAL_CFLAGS += -fno-strict-aliasing
 include $(BUILD_STATIC_LIBRARY)
@@ -25,7 +24,6 @@ include $(BUILD_STATIC_LIBRARY)
 
 LOCAL_PATH := $(BB_PATH)
 include $(CLEAR_VARS)
-LOCAL_CFLAGS := -Wno-error -fno-strict-aliasing
 
 # Each profile require a compressed usage/config, outside the source tree for git history
 # We keep the uncompressed headers in local include-<profile> to track config changes.
@@ -100,7 +98,6 @@ BUSYBOX_C_INCLUDES = \
 
 BUSYBOX_CFLAGS = \
 	-Werror=implicit \
-	-fno-strict-aliasing \
 	-DNDEBUG \
 	-DANDROID \
 	-fno-strict-aliasing \
@@ -112,6 +109,7 @@ BUSYBOX_CFLAGS = \
 ifeq ($(BIONIC_ICS),true)
 BUSYBOX_CFLAGS += -DBIONIC_ICS
 endif
+
 
 # Build the static lib for the recovery tool
 
