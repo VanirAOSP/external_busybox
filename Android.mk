@@ -81,7 +81,8 @@ SUBMAKE := make -s -C $(BB_PATH) CC=$(CC)
 
 BUSYBOX_SRC_FILES = \
 	$(shell cat $(BB_PATH)/busybox-$(BUSYBOX_CONFIG).sources) \
-	libbb/android.c
+	android/libc/pty.c \
+	android/android.c
 
 ifeq ($(TARGET_ARCH),arm)
     BUSYBOX_SRC_FILES += \
@@ -158,7 +159,6 @@ LOCAL_CFLAGS += \
   -Dgetusershell=busybox_getusershell \
   -Dsetusershell=busybox_setusershell \
   -Dendusershell=busybox_endusershell \
-  -Dttyname_r=busybox_ttyname_r \
   -Dgetmntent=busybox_getmntent \
   -Dgetmntent_r=busybox_getmntent_r \
   -Dgenerate_uuid=busybox_generate_uuid
@@ -224,7 +224,6 @@ LOCAL_CFLAGS += \
   -Dgetusershell=busybox_getusershell \
   -Dsetusershell=busybox_setusershell \
   -Dendusershell=busybox_endusershell \
-  -Dttyname_r=busybox_ttyname_r \
   -Dgetmntent=busybox_getmntent \
   -Dgetmntent_r=busybox_getmntent_r \
   -Dgenerate_uuid=busybox_generate_uuid
