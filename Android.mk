@@ -57,17 +57,23 @@ busybox_prepare_full := $(bb_gen)/full/.config
 $(busybox_prepare_full): $(BB_PATH)/busybox-full.config
 	@echo -e ${CL_YLW}"Prepare config for busybox binary"${CL_RST}
 	@rm -rf $(bb_gen)/full
+	@rm -rf $(TARGET_OUT_INTERMEDIATES)/EXECUTABLES/busybox_intermediates
+	@mkdir -p $(TARGET_OUT_INTERMEDIATES)/EXECUTABLES/busybox_intermediates
+	@touch $(TARGET_OUT_INTERMEDIATES)/EXECUTABLES/busybox_intermediates/import_includes
 	@mkdir -p $(@D)
 	@cat $^ > $@ && echo "CONFIG_CROSS_COMPILER_PREFIX=\"$(BUSYBOX_CROSS_COMPILER_PREFIX)\"" >> $@
-	make -C $(BB_PATH) prepare O=$(@D) $(BB_PREPARE_FLAGS)
+	+make -C $(BB_PATH) prepare O=$(@D) $(BB_PREPARE_FLAGS)
 
 busybox_prepare_minimal := $(bb_gen)/minimal/.config
 $(busybox_prepare_minimal): $(BB_PATH)/busybox-minimal.config
 	@echo -e ${CL_YLW}"Prepare config for libbusybox"${CL_RST}
 	@rm -rf $(bb_gen)/minimal
+	@rm -rf $(TARGET_OUT_INTERMEDIATES)/STATIC_LIBRARIES/libbusybox_intermediates
+	@mkdir -p $(TARGET_OUT_INTERMEDIATES)/STATIC_LIBRARIES/libbusybox_intermediates
+	@touch $(TARGET_OUT_INTERMEDIATES)/STATIC_LIBRARIES/libbusybox_intermediates/import_includes
 	@mkdir -p $(@D)
 	@cat $^ > $@ && echo "CONFIG_CROSS_COMPILER_PREFIX=\"$(BUSYBOX_CROSS_COMPILER_PREFIX)\"" >> $@
-	make -C $(BB_PATH) prepare O=$(@D) $(BB_PREPARE_FLAGS)
+	+make -C $(BB_PATH) prepare O=$(@D) $(BB_PREPARE_FLAGS)
 
 
 #####################################################################
@@ -81,6 +87,7 @@ SUBMAKE := make -s -C $(BB_PATH) CC=$(CC)
 
 BUSYBOX_SRC_FILES = \
 	$(shell cat $(BB_PATH)/busybox-$(BUSYBOX_CONFIG).sources) \
+	android/libc/mktemp.c \
 	android/libc/pty.c \
 	android/android.c
 
@@ -156,6 +163,7 @@ LOCAL_C_INCLUDES := $(bb_gen)/minimal/include $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := -Dmain=busybox_driver $(BUSYBOX_CFLAGS)
 LOCAL_CFLAGS += \
   -DRECOVERY_VERSION \
+  -Dmktemp=busybox_mktemp \
   -Dgetusershell=busybox_getusershell \
   -Dsetusershell=busybox_setusershell \
   -Dendusershell=busybox_endusershell \
@@ -182,7 +190,6 @@ LOCAL_SRC_FILES += android/libc/__set_errno.c
 endif
 LOCAL_C_INCLUDES := $(bb_gen)/full/include $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := $(BUSYBOX_CFLAGS)
-LOCAL_LDFLAGS += -Wl,--no-fatal-warnings
 LOCAL_MODULE := busybox
 LOCAL_MODULE_TAGS := eng debug
 LOCAL_MODULE_PATH := $(TARGET_OUT_OPTIONAL_EXECUTABLES)
@@ -221,13 +228,13 @@ LOCAL_SRC_FILES := $(BUSYBOX_SRC_FILES)
 LOCAL_C_INCLUDES := $(bb_gen)/full/include $(BUSYBOX_C_INCLUDES)
 LOCAL_CFLAGS := $(BUSYBOX_CFLAGS)
 LOCAL_CFLAGS += \
+  -Dmktemp=busybox_mktemp \
   -Dgetusershell=busybox_getusershell \
   -Dsetusershell=busybox_setusershell \
   -Dendusershell=busybox_endusershell \
   -Dgetmntent=busybox_getmntent \
   -Dgetmntent_r=busybox_getmntent_r \
   -Dgenerate_uuid=busybox_generate_uuid
-LOCAL_LDFLAGS += -Wl,--no-fatal-warnings
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE := static_busybox
 LOCAL_MODULE_STEM := busybox
