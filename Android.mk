@@ -9,7 +9,7 @@ BIONIC_L := true
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := android/regex/bb_regex.c
 LOCAL_C_INCLUDES := $(BB_PATH)/android/regex
-LOCAL_CFLAGS := -Wno-sign-compare
+LOCAL_CFLAGS := -Wno-error -Wno-sign-compare -fno-strict-aliasing
 LOCAL_MODULE := libclearsilverregex
 include $(BUILD_STATIC_LIBRARY)
 
@@ -17,6 +17,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(shell cat $(BB_PATH)/android/librpc.sources)
 LOCAL_C_INCLUDES := $(BB_PATH)/android/librpc
+LOCAL_CFLAGS := -Wno-error -fno-strict-aliasing
 LOCAL_MODULE := libuclibcrpc
 LOCAL_CFLAGS += -fno-strict-aliasing
 ifeq ($(BIONIC_L),true)
@@ -30,6 +31,7 @@ include $(BUILD_STATIC_LIBRARY)
 
 LOCAL_PATH := $(BB_PATH)
 include $(CLEAR_VARS)
+LOCAL_CFLAGS := -Wno-error -fno-strict-aliasing
 
 # Explicitly set an architecture specific CONFIG_CROSS_COMPILER_PREFIX
 ifneq ($(filter arm arm64,$(TARGET_ARCH)),)
@@ -109,6 +111,8 @@ BUSYBOX_C_INCLUDES = \
 
 BUSYBOX_CFLAGS = \
 	-Werror=implicit -Wno-clobbered \
+  -Wno-error=format-security \
+	-fno-strict-aliasing \
 	-DNDEBUG \
 	-DANDROID \
 	-fno-strict-aliasing \
@@ -127,7 +131,6 @@ endif
 ifeq ($(BIONIC_ICS),true)
     BUSYBOX_CFLAGS += -DBIONIC_ICS
 endif
-
 
 # Build the static lib for the recovery tool
 
