@@ -40,8 +40,8 @@
 #include <features.h>
 
 #include <errno.h>
-#include <unistd.h>
 #include <strings.h>
+#include <unistd.h>
 #include "rpc_private.h"
 #include <rpc/svc.h>
 #include <rpc/pmap_clnt.h>
